@@ -46,6 +46,6 @@
     user: "{{ item.0.username }}"
     key: "{{ item.1 }}"
   with_subelements:
-    - users
+    - "{{ users }}"
     - ssh_key
   tags: ['users','configuration']
