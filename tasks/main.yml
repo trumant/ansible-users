@@ -14,29 +14,9 @@
   when: users_create_per_user_group
   tags: ['users','configuration']
 
-- name: Creating groups
-  group:
-    name: "{{ item }}"
-  with_items: "{{ groups_to_create }}"
-  tags: ['users','groups','configuration']
-
-- name: Per-user group creation
-  group:
-    name: "{{ item.username }}"
-    gid: "{{ item.uid }}"
-  with_items: "{{ users }}"
-  when: users_create_per_user_group
-  tags: ['users','configuration']
-
 - name: User creation
   user:
     name: "{{ item.username }}"
-    group: "{{ users_create_per_user_group | ternary(item.username,users_group) }}"
-    groups: "{{ item.groups | join(',') }}"
-    shell: "{{ (item.shell is defined) | ternary(item.shell, users_default_shell) }}"
-    password: "{{ item.password | default('!') }}"
-    comment: "{{ item.name }}"
-    uid: "{{ item.uid }}"
     createhome: "{{ users_create_homedirs | bool }}"
   with_items: "{{ users }}"
   tags: ['users','configuration']
