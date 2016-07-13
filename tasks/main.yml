@@ -36,13 +36,13 @@
 
 - name: User creation
   user:
-    name: "{{ item.username }}"
-    group: "{{ users_create_per_user_group | ternary(item.username,users_group) }}"
-    groups: "{{ item.groups | join(',') }}"
-    shell: "{{ (item.shell is defined) | ternary(item.shell, users_default_shell) }}"
+    name: "{{ item.item.username }}"
+    group: "{{ users_create_per_user_group | ternary(item.item.username,users_group) }}"
+    groups: "{{ item.item.groups | join(',') }}"
+    shell: "{{ (item.item.shell is defined) | ternary(item.item.shell, users_default_shell) }}"
     password: "{{ item.password | default('!') }}"
-    comment: "{{ item.name }}"
-    uid: "{{ item.uid }}"
+    comment: "{{ item.item.name }}"
+    uid: "{{ item.item.uid }}"
     createhome: "{{ users_create_homedirs | bool }}"
   when: item.stdout == ""
   with_items: "{{ user_exist.results }}"
