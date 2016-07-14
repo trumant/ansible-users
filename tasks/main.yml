@@ -48,7 +48,7 @@
   with_items: "{{ user_exist.results }}"
   tags: ['users','configuration']
 
-- name: User home directory creation and ssh-key push
+- name: User home directory creation
   user:
     name: "{{ item.stdout }}"
     createhome: "{{ users_create_homedirs | bool }}"
