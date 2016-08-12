@@ -24,7 +24,7 @@
   pre_tasks:
     - include: cleanup.yml
 
-    - name: Adding code for ldap user check
+    - name: Adding test user to check using getent command for ldap user check
       shell:echo  $'#!/bin/bash\nvvrr:x:2627:2500:VVRR:/home/vvrr:/bin/bash' > /usr/bin/getent
 
     - name: Check user exists
