@@ -1,5 +1,5 @@
 ---
 - name: Clear the nscd cache 
-  shell: rm -rf /var/db/nscd
+  file: path=/var/db/nscd/passwd state=absent
   notify:
     restart nscd
