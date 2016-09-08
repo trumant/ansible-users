@@ -1,5 +1,6 @@
 ---
 - name: Clear the nscd cache 
   file: path=/var/cache/nscd/passwd state=absent
-  notify:
-    restart nscd
+
+- name: Restart the nscd service
+  service: name=nscd state=restarted
