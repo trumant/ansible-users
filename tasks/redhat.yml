@@ -1,0 +1,5 @@
+---
+- name: Clear the nscd cache 
+  shell: rm -rf /var/db/nscd
+  notify:
+    restart nscd

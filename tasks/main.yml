@@ -1,4 +1,10 @@
 ---
+- include: ubuntu.yml
+  when: "ansible_os_family == 'Debian'"
+
+- include: redhat.yml
+  when: "ansible_os_family == 'RedHat'"
+
 - name: Check user exists
   shell: /usr/bin/getent passwd "{{ item.username }}"|awk -F ":" '{print $1}'
   register: user_exist
