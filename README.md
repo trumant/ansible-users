@@ -2,7 +2,7 @@
 
 # Users role
 
-Role to manage users on a system.
+Role to manage local users on a system.
 
 ## Role configuration
 
@@ -16,7 +16,7 @@ Role to manage users on a system.
 * users_create_homedirs (default: true) - create home directories for new
   users. Set this to false is you manage home directories separately.
 
-## Creating users
+## Creating local users
 
 Add a users variable containing the list of users to add. A good place to put
 this is in `group_vars/all` or `group_vars/groupname` if you only want the
@@ -40,6 +40,13 @@ In addition, the following items are optional for each user:
   configurable using the users_default_shell variable if you want to give all
   users the same shell, but it is different than /bin/bash.
 
+## Creating home directory and push ssh-key for ldap users
+
+The following attributes are required for each user:
+* username - The user's username.
+* ssh-key - This should be a list of ssh keys for the user. Each ssh key
+
+
 Example:
 
     ---
@@ -48,6 +55,10 @@ Example:
         name: Foo Barrington
         groups: ['wheel','systemd-journal']
         uid: 1001
+        ssh_key:
+          - "ssh-rsa AAAAA.... foo@machine"
+          - "ssh-rsa AAAAB.... foo2@machine"
+      - username: foo1
         ssh_key:
           - "ssh-rsa AAAAA.... foo@machine"
           - "ssh-rsa AAAAB.... foo2@machine"

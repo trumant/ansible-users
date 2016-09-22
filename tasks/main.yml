@@ -1,4 +1,15 @@
 ---
+- include: ubuntu.yml
+  when: "ansible_os_family == 'Debian'"
+
+- include: redhat.yml
+  when: "ansible_os_family == 'RedHat'"
+
+- name: Check user exists
+  shell: /usr/bin/getent passwd "{{ item.username }}"|awk -F ":" '{print $1}'
+  register: user_exist
+  with_items: "{{ users }}"
+
 - name: Deleted user removal
   user:
     name: "{{ item.username }}"
@@ -17,6 +28,7 @@
 - name: Creating groups
   group:
     name: "{{ item }}"
+  when: item.uid is defined
   with_items: "{{ groups_to_create }}"
   tags: ['users','groups','configuration']
 
@@ -25,20 +37,30 @@
     name: "{{ item.username }}"
     gid: "{{ item.uid }}"
   with_items: "{{ users }}"
-  when: users_create_per_user_group
+  when: users_create_per_user_group and item.uid is defined
   tags: ['users','configuration']
 
 - name: User creation
   user:
-    name: "{{ item.username }}"
-    group: "{{ users_create_per_user_group | ternary(item.username,users_group) }}"
-    groups: "{{ item.groups | join(',') }}"
-    shell: "{{ (item.shell is defined) | ternary(item.shell, users_default_shell) }}"
+    name: "{{ item.item.username }}"
+    group: "{{ users_create_per_user_group | ternary(item.item.username,users_group) }}"
+    groups: "{{ item.item.groups | join(',') }}"
+    shell: "{{ (item.item.shell is defined) | ternary(item.item.shell, users_default_shell) }}"
     password: "{{ item.password | default('!') }}"
-    comment: "{{ item.name }}"
-    uid: "{{ item.uid }}"
+    comment: "{{ item.item.name }}"
+    uid: "{{ item.item.uid }}"
+    home: "{{ item.item.home | default(omit) }}"
     createhome: "{{ users_create_homedirs | bool }}"
-  with_items: "{{ users }}"
+  when: item.stdout == ""  and "{{ item.item.username }}" in local_users
+  with_items: "{{ user_exist.results }}"
+  tags: ['users','configuration']
+
+- name: User home directory creation
+  user:
+    name: "{{ item.stdout }}"
+    createhome: "{{ users_create_homedirs | bool }}"
+  when: item.stdout != ""
+  with_items: "{{ user_exist.results }}"
   tags: ['users','configuration']
 
 - name: SSH keys

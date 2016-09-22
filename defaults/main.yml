@@ -17,3 +17,4 @@ users_create_homedirs: true
 users: []
 users_deleted: []
 groups_to_create: []
+local_users: [ ansibletestuser, comtest ]
