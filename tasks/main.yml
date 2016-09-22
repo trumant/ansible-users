@@ -49,6 +49,7 @@
     password: "{{ item.password | default('!') }}"
     comment: "{{ item.item.name }}"
     uid: "{{ item.item.uid }}"
+    home: "{{ item.item.home | default(omit) }}"
     createhome: "{{ users_create_homedirs | bool }}"
   when: item.stdout == ""  and "{{ item.item.username }}" in local_users
   with_items: "{{ user_exist.results }}"
