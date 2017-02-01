@@ -23,7 +23,7 @@
 - name: Per-user group creation
   group:
     name: "{{ item.username }}"
-    gid: "{{ item.uid }}"
+    gid: "{{ item.uid | default(omit) }}"
   with_items: "{{ users }}"
   when: users_create_per_user_group
   tags: ['users','configuration']
@@ -36,7 +36,7 @@
     shell: "{{ (item.shell is defined) | ternary(item.shell, users_default_shell) }}"
     password: "{{ item.password | default('!') }}"
     comment: "{{ item.name }}"
-    uid: "{{ item.uid }}"
+    uid: "{{ item.uid | default(omit) }}"
     createhome: "{{ users_create_homedirs | bool }}"
   with_items: "{{ users }}"
   tags: ['users','configuration']
