@@ -2,6 +2,7 @@
 - name: Deleted user removal
   user:
     name: "{{ item.username }}"
+    force: yes
     state: absent
   with_items: "{{ users_deleted }}"
   tags: ['users','configuration']
