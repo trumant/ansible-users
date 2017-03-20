@@ -1,11 +1,26 @@
 ---
+- name: Deleted active/inactive sessions for marked users 
+  command: "pkill -u {{ item.username }}"
+  with_items: "{{ users_deleted }}"
+  register: pkill_result
+  changed_when: "pkill_result.rc == 0"
+  failed_when: false
+  tags: ['users','configuration', 'users_delete']
+
 - name: Deleted user removal
   user:
     name: "{{ item.username }}"
     force: yes
     state: absent
   with_items: "{{ users_deleted }}"
-  tags: ['users','configuration']
+  tags: ['users','configuration', 'users_delete']
+
+- name: Delete home directory of marked users
+  file:
+    path: /home/{{ item.username }}
+    state: absent
+  with_items: "{{ users_deleted }}"
+  tags: ['users','configuration', 'users_delete']
 
 - name: Deleted per-user group removal
   group:
